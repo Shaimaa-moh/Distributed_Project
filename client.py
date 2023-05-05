@@ -33,7 +33,7 @@ def main():
         clock.tick(60)
         p2 = n.send(p)
   
-
+        p2.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -43,3 +43,4 @@ def main():
         redrawWindow(win,p,p2)
 
 main()
+
