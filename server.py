@@ -3,7 +3,7 @@ from _thread import *
 import sys
 from player import Player 
 import pickle
-server="192.168.1.5" #ip address of my device
+server="192.168.1.11" #ip address of my device
 port=5555
 
 s=socket.socket(socket.AF_INET , socket.SOCK_STREAM)

@@ -5,17 +5,17 @@ from network import Network
 # window height and width
 width = 500
 height = 500
-win = pygame.display.set_mode((width, height))
+window = pygame.display.set_mode((width, height))
 
 pygame.display.set_caption("Client")
 
 
-def redrawWindow(win,player,player2):
+def redrawWindow(window,player,player2):
     
     # draw white window
-    win.fill((255,255,255))
-    player.draw(win)
-    player2.draw(win)
+    window.fill((255,255,255))
+    player.draw(window)
+    player2.draw(window)
     pygame.display.update()
 
 
@@ -40,7 +40,7 @@ def main():
                 pygame.quit()
 
         p.move()
-        redrawWindow(win,p,p2)
+        redrawWindow(window,p,p2)
 
 main()
 
