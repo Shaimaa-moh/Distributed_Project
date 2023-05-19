@@ -4,6 +4,8 @@ import math
 import random
 import pygame
 import sys
+from player import Player
+from network import Network
 pygame.init()  # initializes the Pygame
 screen = pygame.display.set_mode((798, 600))
 
@@ -48,16 +50,6 @@ def introscreen():
         pygame.draw.rect(screen, (255, 255, 255), button1, 6)
         # pygame.draw.rect(screen, (255, 255, 255), button2, 6)
         # pygame.draw.rect(screen, (255, 255, 255), button3, 6)
-
-        # if our cursor is on button1 which is PLAY button
-        if button1.collidepoint(x, y):
-            # changing from inactive to active by changing the color from white to red
-            pygame.draw.rect(screen, (0, 0, 0), button1, 6)
-        #### if we click on the PLAY button ####
-            if click:
-                countdown()  # CALLING COUNTDOWN FUNCTION TO START OUR GAME
-
-        # checking for mouse click event
         click = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -66,6 +58,26 @@ def introscreen():
                 if event.button == 1:
                     click = True
         pygame.display.update()
+        # if our cursor is on button1 which is PLAY button
+        if button1.collidepoint(x, y):
+            # changing from inactive to active by changing the color from white to red
+            pygame.draw.rect(screen, (0, 0, 0), button1, 6)
+        #### if we click on the PLAY button ####
+            if click:
+                gameloop()  # CALLING COUNTDOWN FUNCTION TO START OUR GAME
+
+        # checking for mouse click event
+
+
+def waiting():
+    font2 = pygame.font.Font('freesansbold.ttf', 55)
+    countdownBacground = pygame.image.load('./images/bg.png')
+    waiting = font2.render('Waiting for Other Player', True, (255, 255, 0))
+    screen.blit(countdownBacground, (0, 0))
+
+    ###### Displaying waiting for oponents ######
+    screen.blit(waiting, (100, 250))
+    pygame.display.update()
 
   ###### Countdown ######
 
@@ -115,8 +127,14 @@ def countdown():
     ###### Displaying  Go!!! ######
     screen.blit(go, (300, 250))
     pygame.display.update()
+    # calling the gamloop so that our game can start after the countdown
     time.sleep(1)
-    gameloop()  # calling the gamloop so that our game can start after the countdown
+    pygame.display.update()
+
+
+def redrawScreen(screen, player, player2):
+    player.draw(screen)
+    player2.draw(screen)
     pygame.display.update()
 
 
@@ -133,19 +151,43 @@ def gameloop():
     score_value = 0
     font1 = pygame.font.Font("freesansbold.ttf", 25)
 
-    def show_score(x, y):
-        score = font1.render("SCORE: " + str(score_value), True, (255, 0, 0))
+    def show_score(x, y, color):
+        score = font1.render("SCORE: " + str(score_value), True, color)
         screen.blit(score, (x, y))
 
     # highscore part
     with open("highscore.txt", "r") as f:
         highscore = f.read()
 
-    def show_highscore(x, y):
+    def show_highscore(x, y, color):
         Hiscore_text = font1.render(
-            'HISCORE :' + str(highscore), True, (255, 0, 0))
+            'HIGHSCORE :' + str(highscore), True, color)
         screen.blit(Hiscore_text, (x, y))
         pygame.display.update()
+
+    def victory():
+        gameoverImg = pygame.image.load("./images/win.jpg")
+        run = True
+        while run:
+
+            screen.blit(gameoverImg, (0, 0))
+            time.sleep(0.5)
+            show_score(330, 400, (0, 0, 0))
+            time.sleep(0.5)
+            show_highscore(330, 450, (0, 0, 0))
+            pygame.display.update()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        introscreen()
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
 
     ###### creating our game over function #######
 
@@ -156,9 +198,9 @@ def gameloop():
 
             screen.blit(gameoverImg, (0, 0))
             time.sleep(0.5)
-            show_score(330, 400)
+            show_score(330, 400, (255, 0, 0))
             time.sleep(0.5)
-            show_highscore(330, 450)
+            show_highscore(330, 450, (255, 0, 0))
             pygame.display.update()
 
             for event in pygame.event.get():
@@ -168,26 +210,19 @@ def gameloop():
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        countdown()
+                        introscreen()
                     if event.key == pygame.K_ESCAPE:
                         pygame.quit()
                         sys.exit()
 
     # setting background image
     bg = pygame.image.load('./images/bg.png')
-
-    # setting our player
-    maincar = pygame.image.load('./images/car.png')
-    maincarX = 350
-    maincarY = 495
-    maincarX_change = 0
-    maincarY_change = 0
-
+    run = True
+    n = Network()
+    p = n.getP()
+    p.draw(screen)
     # other cars
-    car1 = pygame.image.load('./images/car1.jpeg')
-    car1X = random.randint(178, 490)
-    car1Y = 100
-    car1Ychange = 10
+
     car2 = pygame.image.load('./images/car2.png')
     car2X = random.randint(178, 490)
     car2Y = 100
@@ -198,8 +233,18 @@ def gameloop():
     car3Y = 100
     car3Ychange = 10
 
-    run = True
+    clock = pygame.time.Clock()
+    reply = n.send({"Player": p, "Crashed": False, })
+    print("Reply:", reply)
+    waiting()
+    while reply["Connections"] < 2:
+        reply = n.send({"Player": p, "Crashed": False, })
+
+    countdown()
     while run:
+
+        clock.tick(60)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -209,41 +254,41 @@ def gameloop():
                 # checking if any key has been pressed
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RIGHT:
-                    maincarX_change += 5
+                    p.x_change += 5
 
                 if event.key == pygame.K_LEFT:
-                    maincarX_change -= 5
+                    p.x_change -= 5
 
                 if event.key == pygame.K_UP:
-                    maincarY_change -= 5
+                    p.y_change -= 5
 
                 if event.key == pygame.K_DOWN:
-                    maincarY_change += 5
+                    p.y_change += 5
 
                 # checking if key has been lifted up
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_RIGHT:
-                    maincarX_change = 0
+                    p.x_change = 0
 
                 if event.key == pygame.K_LEFT:
-                    maincarX_change = 0
+                    p.x_change = 0
 
                 if event.key == pygame.K_UP:
-                    maincarY_change = 0
+                    p.y_change = 0
 
                 if event.key == pygame.K_DOWN:
-                    maincarY_change = 0
+                    p.y_change = 0
 
-        # setting boundary for our main car
-        if maincarX < 178:
-            maincarX = 178
-        if maincarX > 490:
-            maincarX = 490
+        if p.x < 178:
+            p.x = 178
+        if p.x > 490:
+            p.x = 490
 
-        if maincarY < 0:
-            maincarY = 0
-        if maincarY > 495:
-            maincarY = 495
+        if p.y < 0:
+            p.y = 0
+        if p.y > 495:
+            p.y = 495
+        reply = n.send({"Player": p, "Crashed": False, })
 
         # CHANGING COLOR WITH RGB VALUE, RGB = RED, GREEN, BLUE
         screen.fill((0, 0, 0))
@@ -251,38 +296,31 @@ def gameloop():
         # displaying the background image
         screen.blit(bg, (0, 0))
 
-        # displaying our main car
-        screen.blit(maincar, (maincarX, maincarY))
+        # displaying our main cars
+        redrawScreen(screen, p, reply["Oponent"])
 
-        # displaing other cars
-        screen.blit(car1, (car1X, car1Y))
         screen.blit(car2, (car2X, car2Y))
         screen.blit(car3, (car3X, car3Y))
         # calling our show_score function
-        show_score(570, 280)
+        show_score(570, 280, (255, 0, 0))
         # calling show_hiscore function
-        show_highscore(0, 0)
+        show_highscore(0, 0, (255, 0, 0))
 
-        # updating the values
-        maincarX += maincarX_change
-        maincarY += maincarY_change
+        p.x += p.x_change
+        p.y += p.y_change
 
         # movement of the enemies
-        car1Y += car1Ychange
+
         car2Y += car2Ychange
         car3Y += car3Ychange
-        # moving enemies infinitely
-        if car1Y > 670:
-            car1Y = -100
-            car1X = random.randint(178, 490)
-            score_value += 1
+
         if car2Y > 670:
             car2Y = -150
-            car2X = random.randint(178, 490)
+            car2X = reply["car1"]
             score_value += 1
         if car3Y > 670:
             car3Y = -200
-            car3X = random.randint(178, 490)
+            car3X = reply["car2"]
             score_value += 1
 
         # checking if highscore has been created
@@ -291,22 +329,11 @@ def gameloop():
 
         # DETECTING COLLISIONS BETWEEN THE CARS
 
-        # getting distance between our main car and car1
-        def iscollision(car1X, car1Y, maincarX, maincarY):
-            distance = math.sqrt(
-                math.pow(car1X-maincarX, 2) + math.pow(car1Y - maincarY, 2))
-
-            # checking if distance is smaller than 50 after then collision will occur
-
-            if distance < 50:
-                return True
-            else:
-                return False
-
         # getting distance between our main car and car2
-        def iscollision(car2X, car2Y, maincarX, maincarY):
+
+        def iscollision(car2X, car2Y, player):
             distance = math.sqrt(
-                math.pow(car2X-maincarX, 2) + math.pow(car2Y - maincarY, 2))
+                math.pow(car2X-player.x, 2) + math.pow(car2Y - player.y, 2))
 
             # checking if distance is smaller than 50 after then collision will occur
             if distance < 50:
@@ -315,9 +342,9 @@ def gameloop():
                 return False
 
         # getting distance between our main car and car3
-        def iscollision(car3X, car3Y, maincarX, maincarY):
+        def iscollision(car3X, car3Y, player):
             distance = math.sqrt(
-                math.pow(car3X-maincarX, 2) + math.pow(car3Y - maincarY, 2))
+                math.pow(car3X-player.x, 2) + math.pow(car3Y - player.y, 2))
 
             # checking if distance is smaller then 50 after then collision will occur
             if distance < 50:
@@ -327,67 +354,55 @@ def gameloop():
 
         ##### giving collision a variable #####
 
-        # collision between maincar and car1
-        coll1 = iscollision(car1X, car1Y, maincarX, maincarY)
-
         # collision between maincar and car2
-        coll2 = iscollision(car2X, car2Y, maincarX, maincarY)
+        coll2 = iscollision(car2X, car2Y, p)
 
         # collision between maincar and car3
-        coll3 = iscollision(car3X, car3Y, maincarX, maincarY)
-
-        # if coll1 occur
-        if coll1:
-
-            car1Ychange = 0
-            car2Ychange = 0
-            car3Ychange = 0
-            car1Y = 0
-            car2Y = 0
-            car3Y = 0
-            maincarX_change = 0
-            maincarY_change = 0
-            pygame.mixer.music.stop()
-            crash_sound.play()
-        ###### calling our game over function #######
-            time.sleep(1)
-            gameover()
+        coll3 = iscollision(car3X, car3Y, p)
 
         # if coll2 occur
         if coll2:
 
-            car1Ychange = 0
             car2Ychange = 0
             car3Ychange = 0
-            car1Y = 0
             car2Y = 0
             car3Y = 0
-            maincarX_change = 0
-            maincarY_change = 0
+            p.x_change = 0
+            p.y_change = 0
             pygame.mixer.music.stop()
             crash_sound.play()
         ###### calling our game over function #######
-            time.sleep(1)
-            gameover()
+            run = False
+            reply = n.send({"Player": p, "Crashed": True, })
+            while reply["End_Game"] == False:
+                reply = n.send({"Player": p, "Crashed": True, })
+            if reply["Victory"] == True:
+                victory()
+            else:
+                gameover()
 
         # if coll3 occur
         if coll3:
 
-            car1Ychange = 0
             car2Ychange = 0
             car3Ychange = 0
-            car1Y = 0
             car2Y = 0
             car3Y = 0
-            maincarX_change = 0
-            maincarY_change = 0
+            p.x_change = 0
+            p.y_change = 0
             pygame.mixer.music.stop()
             crash_sound.play()
         ###### calling our game over function #######
-            time.sleep(1)
-            gameover()
+            run = False
+            reply = n.send({"Player": p, "Crashed": True, })
+            while reply["End_Game"] == False:
+                reply = n.send({"Player": p, "Crashed": True, })
+            if reply["Victory"] == True:
+                victory()
+            else:
+                gameover()
 
-        if car1Ychange == 0 and car2Ychange == 0 and car3Ychange == 0:
+        if car2Ychange == 0 and car3Ychange == 0:
             pass
 
         # writing to our highscore.txt file
