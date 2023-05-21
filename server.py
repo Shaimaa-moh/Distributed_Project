@@ -4,7 +4,7 @@ import sys
 from player import Player
 import pickle
 import random
-server = "192.168.1.2"  # ip address of my device
+server = "192.168.1.6"  # ip address of my device
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -25,7 +25,6 @@ players = [Player(250, 479, "./images/car.png"), Player(400, 479,
 
 game_end = False
 collide = [False, False]
-
 
 
 def clientThread(conn, player):  # we want to have multiple connections done at once
@@ -80,7 +79,7 @@ def clientThread(conn, player):  # we want to have multiple connections done at 
                         "Victory": victory
                     }
 
-                #print("received: ", data)
+                print("received: ", data)
                 #print("Sending :", reply)
 
             conn.sendall(pickle.dumps(reply))
