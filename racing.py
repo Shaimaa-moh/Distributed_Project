@@ -5,6 +5,7 @@ import random
 import pygame
 import sys
 from player import Player
+
 from network import Network
 pygame.init()  # initializes the Pygame
 screen = pygame.display.set_mode((798, 600))
@@ -15,6 +16,9 @@ pygame.mixer.init()
 # changing title of the game window
 pygame.display.set_caption('Distributed Car Racing Project')
 IntroFont = pygame.font.Font("freesansbold.ttf", 38)
+username = ""
+input_active = False
+click = False
 
 
 def introImg(x, y):
@@ -29,41 +33,79 @@ def play(x, y):
 
 
 def introscreen():
+    global username
+    global input_active
+    global click
     run = True
     pygame.mixer.music.load('./sounds/startingMusic.mp3')
     pygame.mixer.music.play()
+
+    def handle_input_event(event):
+        global username
+        if event.key == pygame.K_RETURN:
+            print("Username:", username)
+        elif event.key == pygame.K_BACKSPACE:
+            username = username[:-1]
+        else:
+            username += event.unicode
     while run:
-        screen.fill((0, 0, 0))
+        WHITE = (255, 255, 255)
+        BLACK = (0, 0, 0)
+        # Clear the screen
+        screen.fill(WHITE)
         introImg(0, 0)
         play(350, 450)
-
         ####### getting coordinates of mouse cursor #######
         x, y = pygame.mouse.get_pos()
+        font = pygame.font.Font(None, 32)
 
         # storing rectangle coordinates (x, y, length, height) by making variables
         button1 = pygame.Rect(265, 440, 300, 50)
         # button2 = pygame.Rect(265, 440, 300, 50)
         # button3 = pygame.Rect(600, 440, 165, 50)
-
+        # Render the label
         ##### Drawing rectangles with stored coorditates of rectangles.######
         ###### pygame.draw.rect takes these arguments (surface, color, coordinates, border) #####
         pygame.draw.rect(screen, (255, 255, 255), button1, 6)
         # pygame.draw.rect(screen, (255, 255, 255), button2, 6)
         # pygame.draw.rect(screen, (255, 255, 255), button3, 6)
-        click = False
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     click = True
+                if input_rect.collidepoint(event.pos):
+                    input_active = True
+                else:
+                    input_active = False
+            elif event.type == pygame.KEYDOWN:
+                if input_active:
+                    handle_input_event(event)
+        # Render the username label
+        label = font.render("Username:", True, BLACK)
+        screen.blit(label, (285, 380))
+
+        # Render the text input box
+        input_rect = pygame.Rect(275, 400, 200, 30)
+        pygame.draw.rect(screen, BLACK, input_rect, 2)
+
+        # Render the text inside the input box
+        input_text = font.render(username, True, BLACK)
+        screen.blit(input_text, (input_rect.x + 5, input_rect.y + 5))
+
+        pygame.display.flip()
+
         pygame.display.update()
+
         # if our cursor is on button1 which is PLAY button
         if button1.collidepoint(x, y):
             # changing from inactive to active by changing the color from white to red
             pygame.draw.rect(screen, (0, 0, 0), button1, 6)
         #### if we click on the PLAY button ####
             if click:
+                click = False
                 gameloop()  # CALLING COUNTDOWN FUNCTION TO START OUR GAME
 
         # checking for mouse click event
@@ -140,6 +182,7 @@ def redrawScreen(screen, player, player2):
 
 # defining our gameloop function
 def gameloop():
+    global username
 
     ####### music #######
     pygame.mixer.music.load('./sounds/BackgroundMusic.mp3')
@@ -234,11 +277,11 @@ def gameloop():
     car3Ychange = 10
 
     clock = pygame.time.Clock()
-    reply = n.send({"Player": p, "Crashed": False, })
+    reply = n.send({"Player": p, "Crashed": False, "Username": username, })
     print("Reply:", reply)
     waiting()
     while reply["Connections"] < 2:
-        reply = n.send({"Player": p, "Crashed": False, })
+        reply = n.send({"Player": p, "Crashed": False, "Username": username, })
 
     countdown()
     while run:
@@ -288,7 +331,7 @@ def gameloop():
             p.y = 0
         if p.y > 495:
             p.y = 495
-        reply = n.send({"Player": p, "Crashed": False, })
+        reply = n.send({"Player": p, "Crashed": False, "Username": username, })
 
         # CHANGING COLOR WITH RGB VALUE, RGB = RED, GREEN, BLUE
         screen.fill((0, 0, 0))
@@ -373,9 +416,11 @@ def gameloop():
             crash_sound.play()
         ###### calling our game over function #######
             run = False
-            reply = n.send({"Player": p, "Crashed": True, })
+            reply = n.send(
+                {"Player": p, "Crashed": True, "Username": username, })
             while reply["End_Game"] == False:
-                reply = n.send({"Player": p, "Crashed": True, })
+                reply = n.send(
+                    {"Player": p, "Crashed": True, "Username": username, })
             if reply["Victory"] == True:
                 victory()
             else:
@@ -394,9 +439,11 @@ def gameloop():
             crash_sound.play()
         ###### calling our game over function #######
             run = False
-            reply = n.send({"Player": p, "Crashed": True, })
+            reply = n.send(
+                {"Player": p, "Crashed": True, "Username": username, })
             while reply["End_Game"] == False:
-                reply = n.send({"Player": p, "Crashed": True, })
+                reply = n.send(
+                    {"Player": p, "Crashed": True, "Username": username, })
             if reply["Victory"] == True:
                 victory()
             else:
