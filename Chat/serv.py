@@ -5,16 +5,17 @@ import select
 # Model
 class client:
     #Save clients as a linked List
-    def __init__(self,name):
+    def __init__(self,name,connection):
         self.name = name
         self.next=None
+        self.connection=connection
         
 class ClientList:
     def __init__(self):
         self.head=None
 
-    def add(self,name):
-        newClient=client(name)
+    def add(self,name,connection):
+        newClient=client(name,connection)
 
         #Check if the list is empty
         if self.head is None:
@@ -23,6 +24,31 @@ class ClientList:
         else:
             newClient.next=self.head
             self.head=newClient        
+
+    def nameAvailable(self,name):
+        client=self.head
+        while   client is not None:
+            if client.name==name:
+                return False
+            client=client.next
+        return True
+
+        
+            
+              
+
+        
+    def getByConnection(self,connection):
+     #put in connection and check through the list of clients and get the client which corresponds to that connection 
+            client=self.head
+            while   client is not None:
+                if client.connection==connection:
+                 return client
+                client=client.next
+            return None
+
+
+ 
 
 #View
 #creating gui elements
@@ -164,9 +190,22 @@ class Server:
                     connection,client_address=s.accept()
                     connection.setblocking(0)
                     inputs.append(connection)
-                    self.clientList.add(f"Client {clientNumber}")
+                    self.clientList.add(f"Client {clientNumber}",connection)
                     clientNumber +=1
-                    
+                else:
+                    message=s.recv(4096).decode()
+                    if message:
+                        #Check client name,either update or tell the client the name is taken
+                        print(f"Got message \"{message}\"\n ")
+                        if message.split(":")[0] == "name":
+                            if self.clientList.nameAvailable(message.split(":")[1]):
+                                client = self.clientList.getByConnection(s)
+                                client.name = message.split(":")[1]
+                                response = "available".encode()
+                            else:
+                                response = "taken".encode()
+                            s.send(response)
+                        
             self.viewcontroller.drawScreen(self.clientList)   
                 
     
