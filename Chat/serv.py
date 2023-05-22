@@ -48,7 +48,30 @@ class ClientList:
             return None
 
 
- 
+class Message:
+
+
+    def __init__(self, text):
+        self.text = text
+        self.next = None
+
+class MessageList:
+
+
+    def __init__(self):
+        self.head = None
+    
+    def add(self, text):
+
+        newMessage = Message(text)
+
+        #do we have an empty list?
+        if self.head is None:
+            self.head = newMessage
+        
+        else:
+            newMessage.next = self.head
+            self.head = newMessage 
 
 #View
 #creating gui elements
@@ -182,6 +205,7 @@ class Server:
             
             readable, writeable,exceptional=select.select(inputs,outputs,inputs,0.1)
             #timeout = 0.1 which is the number of seconds the server waits
+            messageBuffer = MessageList()
             for s in readable:
                 #select goes when a device is readable which is there is a connection ready
                 if s is self.socket:
@@ -205,7 +229,27 @@ class Server:
                             else:
                                 response = "taken".encode()
                             s.send(response)
-                        
+                        elif message.split(":")[0] == "message":
+                            splitMessage = message.split(":")
+                            #message:bob:hello
+                            messageBuffer.add(f"message:{splitMessage[1]}:{splitMessage[2]}")
+                            client = self.clientList.head
+                            while client is not None:
+                                if client.connection not in writeable:
+                                    writeable.append(client.connection)
+                                client = client.next
+
+            for s in writeable:
+                messageEntry = messageBuffer.head
+                message = ""
+                while messageEntry is not None:
+                    message += f"{messageEntry.text}\n"
+                    messageEntry = messageEntry.next
+                message = message.encode()
+
+                if s is not self.socket:
+                    s.send(message)
+
             self.viewcontroller.drawScreen(self.clientList)   
                 
     

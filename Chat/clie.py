@@ -8,6 +8,32 @@ import socket
 import select
 # MVC
 # Model
+class Message:
+
+
+    def __init__(self, name, message):
+        self.name = name
+        self.message = message
+        self.next = None
+
+class MessageList:
+
+
+    def __init__(self):
+        self.head = None
+    
+    def add(self, name, message):
+
+        newMessage = Message(name, message)
+
+        #do we have an empty list?
+        if self.head is None:
+            self.head = newMessage
+        
+        else:
+            newMessage.next = self.head
+            self.head = newMessage
+
       
 # When we type port number to connect to server we will select name to the client to login
 #the server is going to check it
@@ -228,13 +254,16 @@ class ClientLogin(ViewController):
                 controller.name=self.nameField.text.text.split(": ")[1]
                 #True means move on
                 return True
+            else:
+                self.ready = False
+                self.nameField.text.text = "Username: "
                 
                 
             return False
 
     def getNextViewController(self):
         #it returns the next view controller and returns the reference
-        return self
+        return ChatRoom()
 
     def drawScreen(self):
         self.screen.fill(self.palette['teal'])
@@ -246,7 +275,83 @@ class ClientLogin(ViewController):
         pg.display.update()
                 
 class ChatRoom(ViewController):
-    pass
+    def __init__(self):
+
+        super().__init__()
+
+        self.screen = pg.display.set_mode((800,600))
+
+        messageLabel = label("", self.font)
+        messagePanel = Rectangle((50,515), (630,75))
+        self.messageField = InputField(messageLabel, messagePanel)
+
+        submitLabel = label("Send", self.font)
+        submitPanel = Rectangle((690,515), (100,75))
+        self.submitButton = Button(submitPanel, submitLabel, self.palette["tur"], self.palette["dark"])
+
+        self.messagePanel = Rectangle((50,10), (630,490))
+
+        self.ready = False
+
+    def handleClick(self):
+        
+        self.messageField.active = self.messageField.hasMouse()
+
+        if self.submitButton.hasMouse():
+            self.ready = True
+    
+    def handleButtonPress(self, event):
+        
+        if self.messageField.active:
+            self.messageField.handleKeyPress(event)
+    
+    def shouldAdvance(self, controller):
+
+        if self.ready:
+            message = "message:" + controller.name + ":" + self.messageField.text.text
+            controller.socket.send(message.encode())
+            self.messageField.text.text = ""
+            self.ready = False
+        
+        inputs = [controller.socket,]
+        outputs = []
+        readable, writable, exceptional = select.select(inputs, outputs, inputs, 0.1)
+
+        for s in readable:
+            if s is controller.socket:
+                #message from server
+                messages = s.recv(4096).decode()
+                if messages:
+                    for message in messages.split("\n"):
+                        splitMessage = message.split(":")
+                        if splitMessage[0] == "message":
+                            controller.messageList.add(splitMessage[1], splitMessage[2])
+        
+        return False
+
+    def getNextViewController(self):
+        
+        return None
+    
+    def drawScreen(self, controller):
+
+        self.screen.fill(self.palette["teal"])
+
+        self.messageField.draw(self.screen, self.palette["tur"], self.palette["dark"])
+        self.submitButton.draw(self.screen)
+        self.messagePanel.draw(self.screen, self.palette["tur"])
+
+        messageLabel = label("", self.font)
+
+        messageEntry = controller.messageList.head
+        y = 440
+        while messageEntry is not None and y > 10:
+            messageLabel.text = f"{messageEntry.name}: {messageEntry.message}"
+            messageLabel.draw(self.screen, 100, y + 25, self.palette["dark"])
+            y -= 50
+            messageEntry = messageEntry.next
+
+        pg.display.update()
     
     
         
@@ -264,6 +369,8 @@ class Client:
         # self.testTextLabel=InputField(textObject,panelObject)
 
         self.socket=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        self.name = None
+        self.messageList = MessageList()
 
         self.viewcontroller=ServerSelect()
      
