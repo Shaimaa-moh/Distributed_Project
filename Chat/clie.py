@@ -107,8 +107,8 @@ class InputField:
             self.text.text=self.text.text[:-1]
         else:
             #hit anything else, will be shown 
-            self.text.text+=pg.key.name(event.key)
-            # print(f"User pressed \"{pg.key.name(event.key)}\"")    
+            self.text.text +=pg.key.name(event.key).replace("[", "").replace("]", "")
+            print(f"User pressed {pg.key.name(event.key)}")    
 
 
     def draw(self,surface,panelColor,textColor):
@@ -190,8 +190,9 @@ class ServerSelect(ViewController):
         #text.text: the first one is label object and the then textfield within that is the actual string
         #return true if itis connected
         if self.ready:
-            portNumber=  int(self.portField.text.text.split(": ")[1])
-            controller.socket.connect(('192.168.1.7',portNumber))
+            # portNumber=  int(''.join(filter(str.isdigit, self.portField.text.text)))
+            portNumber=int(self.portField.text.text.split(": ")[1])
+            controller.socket.connect(('192.168.1.7', portNumber))
             return True
 
         return False
@@ -220,7 +221,7 @@ class ClientLogin(ViewController):
         namePanel=Rectangle((100,200),(200,32))
         self.nameField=InputField(nameLabel,namePanel)
 
-        submitLabel=label("Login ",self.font )
+        submitLabel=label("Login",self.font )
         submitPanel=Rectangle((100,350),(100,32))
         self.submitButton=Button(submitPanel,submitLabel, self.palette["tur"],self.palette["dark"])
 
@@ -234,8 +235,8 @@ class ClientLogin(ViewController):
             #set the flag that it is ready to connect
             self.ready=True
     def handleButtonPress(self, event):
-        if self.portField.active:
-            self.portField.handleKeyPress(event)
+        if self.nameField.active:
+            self.nameField.handleKeyPress(event)
     def shouldAdvance(self, controller):
      
         #if button is pressed, extract the text from name and try to send that as a name
@@ -246,9 +247,11 @@ class ClientLogin(ViewController):
         if self.ready:
             message="name: "+self.nameField.text.text.split(": ")[1]
             controller.socket.send(message.encode())
+            
             print(f"sent message \"{message}\"\n")
             response=controller.socket.recv(4096).decode()
             print(f"Got response \"{response}\"\n")
+            
             if response=="available":
                 #if name is available set this name to the client to know who we are
                 controller.name=self.nameField.text.text.split(": ")[1]
@@ -259,7 +262,7 @@ class ClientLogin(ViewController):
                 self.nameField.text.text = "Username: "
                 
                 
-            return False
+        return False
 
     def getNextViewController(self):
         #it returns the next view controller and returns the reference
@@ -372,7 +375,7 @@ class Client:
         self.name = None
         self.messageList = MessageList()
 
-        self.viewcontroller=ServerSelect()
+        self.viewController=ServerSelect()
      
         
         
@@ -388,21 +391,16 @@ class Client:
                      running=False
                 elif event.type==pg.KEYDOWN:
                     #if we get key down event, pass the event onto input field so thet it handles it internally
-                    self.viewcontroller.handleButtonPress(event)
+                    self.viewController.handleButtonPress(event)
                 elif event.type==pg.MOUSEBUTTONDOWN:
-                    self.viewcontroller.handleClick()
+                    self.viewController.handleClick()
 
             #Testing
-            if self.viewcontroller.shouldAdvance(self):
+            if self.viewController.shouldAdvance(self):
                 #passing the instance of the client and 
-                self.viewcontroller=self.viewcontroller.getNextViewController()
-                        
-                        
-
-            
-          
+                self.viewController=self.viewController.getNextViewController() 
                     
-            self.viewcontroller.drawScreen()   
+            self.viewController.drawScreen(self)   
                 
     
     def exit(self):
