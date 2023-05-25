@@ -19,8 +19,10 @@ IntroFont = pygame.font.Font("freesansbold.ttf", 38)
 username = ""
 input_active = False
 click = False
-
+highscore = 0
 score_value = 0
+
+
 def introImg(x, y):
     intro = pygame.image.load("./images/intro.png")
 
@@ -183,7 +185,8 @@ def redrawScreen(screen, player, player2):
 # defining our gameloop function
 def gameloop():
     global username
-    global score_value 
+    global score_value
+    global highscore
     ####### music #######
     pygame.mixer.music.load('./sounds/BackgroundMusic.mp3')
     pygame.mixer.music.play()
@@ -191,19 +194,16 @@ def gameloop():
     crash_sound = pygame.mixer.Sound('./sounds/car_crash.wav')
 
     ####### scoring part ######
-    
+
     font1 = pygame.font.Font("freesansbold.ttf", 25)
 
     def show_score(x, y, color):
+
         score = font1.render("SCORE: " + str(score_value), True, color)
         screen.blit(score, (x, y))
 
-    # highscore part
-    with open("highscore.txt", "r") as f:
-        highscore = f.read()
-
     def show_highscore(x, y, color):
-       
+        global highscore
         Hiscore_text = font1.render(
             'HIGHSCORE :' + str(highscore), True, color)
         screen.blit(Hiscore_text, (x, y))
@@ -278,11 +278,14 @@ def gameloop():
     car3Ychange = 10
 
     clock = pygame.time.Clock()
-    reply = n.send({"Player": p, "Crashed": False, "Username": username,"score":score_value })
+    reply = n.send({"Player": p, "Crashed": False,
+                   "Username": username, "score": score_value})
+    highscore = reply["Highscore"]
     print("Reply:", reply)
     waiting()
     while reply["Connections"] < 2:
-        reply = n.send({"Player": p, "Crashed": False, "Username": username, "score":score_value})
+        reply = n.send({"Player": p, "Crashed": False,
+                       "Username": username, "score": score_value})
 
     countdown()
     while run:
@@ -332,7 +335,8 @@ def gameloop():
             p.y = 0
         if p.y > 495:
             p.y = 495
-        reply = n.send({"Player": p, "Crashed": False, "Username": username,"score":score_value })
+        reply = n.send({"Player": p, "Crashed": False,
+                       "Username": username, "score": score_value})
 
         # CHANGING COLOR WITH RGB VALUE, RGB = RED, GREEN, BLUE
         screen.fill((0, 0, 0))
@@ -418,13 +422,15 @@ def gameloop():
         ###### calling our game over function #######
             run = False
             reply = n.send(
-                {"Player": p, "Crashed": True, "Username": username, "score":score_value})
+                {"Player": p, "Crashed": True, "Username": username, "score": score_value})
             while reply["End_Game"] == False:
                 reply = n.send(
-                    {"Player": p, "Crashed": True, "Username": username,"score":score_value })
+                    {"Player": p, "Crashed": True, "Username": username, "score": score_value})
             if reply["Victory"] == True:
+                highscore = reply["Highscore"]
                 victory()
             else:
+                highscore = reply["Highscore"]
                 gameover()
 
         # if coll3 occur
@@ -441,13 +447,15 @@ def gameloop():
         ###### calling our game over function #######
             run = False
             reply = n.send(
-                {"Player": p, "Crashed": True, "Username": username,"score":score_value })
+                {"Player": p, "Crashed": True, "Username": username, "score": score_value})
             while reply["End_Game"] == False:
                 reply = n.send(
-                    {"Player": p, "Crashed": True, "Username": username, "score":score_value})
+                    {"Player": p, "Crashed": True, "Username": username, "score": score_value})
             if reply["Victory"] == True:
+                highscore = reply["Highscore"]
                 victory()
             else:
+                highscore = reply["Highscore"]
                 gameover()
 
         if car2Ychange == 0 and car3Ychange == 0:
