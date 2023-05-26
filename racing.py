@@ -106,7 +106,7 @@ def introscreen():
             # changing from inactive to active by changing the color from white to red
             pygame.draw.rect(screen, (0, 0, 0), button1, 6)
         #### if we click on the PLAY button ####
-            if click:
+            if click and username != "":
                 click = False
                 gameloop()  # CALLING COUNTDOWN FUNCTION TO START OUR GAME
 
@@ -270,22 +270,22 @@ def gameloop():
     car2 = pygame.image.load('./images/car2.png')
     car2X = random.randint(178, 490)
     car2Y = 100
-    car2Ychange = 10
+    car2Ychange = 7
 
     car3 = pygame.image.load('./images/car3.png')
     car3X = random.randint(178, 490)
     car3Y = 100
-    car3Ychange = 10
+    car3Ychange = 7
 
     clock = pygame.time.Clock()
     reply = n.send({"Player": p, "Crashed": False,
-                   "Username": username, "score": score_value})
+                   "Username": username, "score": score_value, "Game": "start", })
     highscore = reply["Highscore"]
     print("Reply:", reply)
     waiting()
     while reply["Connections"] < 2:
         reply = n.send({"Player": p, "Crashed": False,
-                       "Username": username, "score": score_value})
+                       "Username": username, "score": score_value, "Game": "Playing", })
 
     countdown()
     while run:
@@ -336,7 +336,7 @@ def gameloop():
         if p.y > 495:
             p.y = 495
         reply = n.send({"Player": p, "Crashed": False,
-                       "Username": username, "score": score_value})
+                       "Username": username, "score": score_value, "Game": "Playing", })
 
         # CHANGING COLOR WITH RGB VALUE, RGB = RED, GREEN, BLUE
         screen.fill((0, 0, 0))
@@ -422,10 +422,13 @@ def gameloop():
         ###### calling our game over function #######
             run = False
             reply = n.send(
-                {"Player": p, "Crashed": True, "Username": username, "score": score_value})
-            while reply["End_Game"] == False:
-                reply = n.send(
-                    {"Player": p, "Crashed": True, "Username": username, "score": score_value})
+                {"Player": p, "Crashed": True, "Username": username, "score": score_value, "Game": "Playing", })
+            try:
+                while reply["End_Game"] == False:
+                    reply = n.send(
+                        {"Player": p, "Crashed": True, "Username": username, "score": score_value, "Game": "Playing", })
+            except:
+                gameover()
             if reply["Victory"] == True:
                 highscore = reply["Highscore"]
                 victory()
@@ -447,10 +450,13 @@ def gameloop():
         ###### calling our game over function #######
             run = False
             reply = n.send(
-                {"Player": p, "Crashed": True, "Username": username, "score": score_value})
-            while reply["End_Game"] == False:
-                reply = n.send(
-                    {"Player": p, "Crashed": True, "Username": username, "score": score_value})
+                {"Player": p, "Crashed": True, "Username": username, "score": score_value, "Game": "Playing", })
+            try:
+                while reply["End_Game"] == False:
+                    reply = n.send(
+                        {"Player": p, "Crashed": True, "Username": username, "score": score_value, "Game": "Playing", })
+            except:
+                gameover()
             if reply["Victory"] == True:
                 highscore = reply["Highscore"]
                 victory()
@@ -460,10 +466,6 @@ def gameloop():
 
         if car2Ychange == 0 and car3Ychange == 0:
             pass
-
-        # writing to our highscore.txt file
-        with open("highscore.txt", "w") as f:
-            f.write(str(highscore))
 
         pygame.display.update()
 

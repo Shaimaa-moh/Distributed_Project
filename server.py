@@ -61,11 +61,12 @@ def clientThread(conn, player):  # we want to have multiple connections done at 
         try:
             # longer the size of receiving msg , longer it can receive information4
             data = pickle.loads(conn.recv(4096))  # object from player
-            document = collections.find_one(
-                {'username': data["Username"]})  # see username in db or not
-            if document is None:
-                collections.insert_one(
-                    {'username': data["Username"], 'highscore': 0})
+            if data["Game"]=="start":
+                document = collections.find_one(
+                    {'username': data["Username"]})  # see username in db or not
+                if document is None:
+                    collections.insert_one(
+                        {'username': data["Username"], 'highscore': 0})
 
             # example :"45 , 67" -> (45,67)
             players[player] = data["Player"]
