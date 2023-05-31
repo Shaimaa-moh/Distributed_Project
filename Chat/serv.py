@@ -169,7 +169,7 @@ class Server:
         # self.clientList.add('Mary')
         # self.clientList.add('bob')
         #ipconfig on commandline
-        self.host='192.168.1.7'
+        self.host='192.168.145.27'
         self.socket=socket.socket(socket.AF_INET,socket.SOCK_STREAM) #IP uses 4 bytes
     #It doesnt block other processes if it waits to accept a connection
         self.socket.setblocking(0)
