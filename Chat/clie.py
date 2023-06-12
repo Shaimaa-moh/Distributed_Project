@@ -56,11 +56,9 @@ class Label:
 
 class Rectangle:
     
-
     def __init__(self, topLeft, size):
         self.rect = (topLeft[0], topLeft[1], size[0], size[1])
 
-        
     def hasMouse(self):
         (x,y) = pg.mouse.get_pos()
         left = self.rect[0]
@@ -187,7 +185,7 @@ class ServerSelect(ViewController):
         super().__init__()
 
         self.screen = pg.display.set_mode((400,200))
-        self.IPLabel = Label("IP: 192.168.1.4", self.font)
+        self.IPLabel = Label("IP: 192.168.1.2", self.font)
 
         portLabel = Label("Port: ", self.font)
         portPanel = Rectangle((100,100), (150,32))
@@ -223,7 +221,7 @@ class ServerSelect(ViewController):
         if self.ready:
 		 # portNumber=  int(''.join(filter(str.isdigit, self.portField.text.text)))
              portNumber = int(self.portField.text.text.split(": ")[1])
-             controller.socket.connect(("192.168.1.4", portNumber))
+             controller.socket.connect(("192.168.1.2", portNumber))
              return True
         return False
     
@@ -244,7 +242,6 @@ class ServerSelect(ViewController):
     
 class ClientLogin(ViewController):
 
-
     def __init__(self):
 
         super().__init__()
@@ -255,7 +252,6 @@ class ClientLogin(ViewController):
         nameLabel = Label("Username: ", self.font)
         namePanel = Rectangle((100,200), (200,32))
         self.nameField = InputField(nameLabel, namePanel)
-
         submitLabel = Label("Login", self.font)
         submitPanel = Rectangle((100,350), (100,32))
         self.submitButton = Button(submitPanel, submitLabel, self.palette["tur"], self.palette["dark"])
@@ -409,24 +405,23 @@ class ChatRoom(ViewController):
 
 class Client:
 
-    def __init__(self):
+    def __init__(self,username):
         pg.init()
+        
 	#for testing
         # textObject=label(" ... ",pg.font.SysFont("arial",24))
 
         # panelObject=None
-
         # self.testTextLabel=InputField(textObject,panelObject)
-
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.name = None
+        self.name = username
         self.messageList = MessageList()
-
-        self.viewController = ServerSelect()
+        self.viewController = ChatRoom()
    #Create a window pane in which all of the connected clients will be displayed
 
     def run(self):
-
+        #portNumber = int(self.portField.text.text.split(": ")[1])
+        self.socket.connect(("192.168.1.2", 3000))
         running = True
         while running:
 
@@ -451,7 +446,7 @@ class Client:
 #-----------------------------------------------------------------------------#
 
 if __name__ == "__main__":
-    client = Client()
+    client = Client("shaimaa")
     client.run()
     client.exit()
 

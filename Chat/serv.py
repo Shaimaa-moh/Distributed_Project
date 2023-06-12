@@ -33,11 +33,6 @@ class ClientList:
                 return False
             client=client.next
         return True
-
-        
-            
-              
-
         
     def getByConnection(self,connection):
      #put in connection and check through the list of clients and get the client which corresponds to that connection 
@@ -60,12 +55,10 @@ class ClientList:
             return
         
         while temp:
-
             if temp.next == client:
                 #If next thing matched the client
                 temp.next = client.next
                 return
-            
             temp = temp.next
 
 class Message:
@@ -191,16 +184,14 @@ class Server:
         # self.clientList.add('Mary')
         # self.clientList.add('bob')
         #ipconfig on commandline
-        self.host='192.168.1.4'
+        self.host='192.168.1.2'
         self.socket=socket.socket(socket.AF_INET,socket.SOCK_STREAM) #IP uses 4 bytes
     #It doesnt block other processes if it waits to accept a connection
         self.socket.setblocking(0)
-        
-        
-        self.socket.bind((self.host,0))
-        self.port=self.socket.getsockname()[1] #we get the port number
-
-        self.viewcontroller=ViewController(self.port)
+        self.socket.bind((self.host,3000))
+        #self.port=self.socket.getsockname()[1] #we get the port number
+        self.port=3000
+        #self.viewcontroller=ViewController(self.port)
         self.clientList=ClientList()
         
         
@@ -296,7 +287,7 @@ class Server:
                 s.close()
 
                 self.clientList.drop(client)
-            self.viewcontroller.drawScreen(self.clientList)   
+            #self.viewcontroller.drawScreen(self.clientList)   
                 
     
     def exit(self):
