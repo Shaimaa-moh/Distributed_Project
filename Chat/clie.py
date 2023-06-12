@@ -45,12 +45,12 @@ class MessageList:
 class Label:
 
 
-    def __init__(self, text, font):
+   def __init__(self, text, font):
         self.text = text
         self.font = font
     
-    def draw(self, surface, x, y, color):
-	#GUI
+   def draw(self, surface, x, y, color):
+	 #GUI
         #render the font that takes the text input, bounces it down an image, blit is we copy that image of the text  onto the screen
         surface.blit(self.font.render(self.text, True, color), (x - 8, y - 15))
 
@@ -60,6 +60,7 @@ class Rectangle:
     def __init__(self, topLeft, size):
         self.rect = (topLeft[0], topLeft[1], size[0], size[1])
 
+        
     def hasMouse(self):
         (x,y) = pg.mouse.get_pos()
         left = self.rect[0]
@@ -70,6 +71,7 @@ class Rectangle:
     
     def draw(self, surface, color):
         pg.draw.rect(surface, color, self.rect)
+
 
 class Button:
     
@@ -220,9 +222,9 @@ class ServerSelect(ViewController):
 
         if self.ready:
 		 # portNumber=  int(''.join(filter(str.isdigit, self.portField.text.text)))
-            portNumber = int(self.portField.text.text.split(": ")[1])
-            controller.socket.connect((" 192.168.1.4", portNumber))
-            return True
+             portNumber = int(self.portField.text.text.split(": ")[1])
+             controller.socket.connect(("192.168.1.4", portNumber))
+             return True
         return False
     
     def getNextViewController(self):
@@ -357,7 +359,6 @@ class ChatRoom(ViewController):
             message = "message:" + controller.name + ":" + self.messageField.text.text
             controller.socket.send(message.encode())
             self.messageField.text.text = ""
-        
             self.ready = False
         
         inputs = [controller.socket,]
@@ -370,8 +371,8 @@ class ChatRoom(ViewController):
             #If we got message from the server which is a single string with a bunch of different messages so split them off(with the new line character)
             if s is controller.socket:
                 #message from server
-                messages = s.recv(4096).decode()
-                if messages:
+               messages = s.recv(4096).decode()
+               if messages:
                     for message in messages.split("\n"):
                         splitMessage = message.split(":")
                         #If message is valid then append it to the list of messages
@@ -402,7 +403,6 @@ class ChatRoom(ViewController):
             messageLabel.draw(self.screen, 100, y + 25, self.palette["dark"])
             y -= 50
             messageEntry = messageEntry.next
-
         pg.display.update()
 
 # Control
