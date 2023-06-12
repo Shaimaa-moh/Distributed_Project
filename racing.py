@@ -4,6 +4,8 @@ import math
 import random
 import pygame
 import sys
+import threading
+from Chat.clie import Client
 from player import Player
 
 from network import Network
@@ -262,11 +264,15 @@ def gameloop():
     # setting background image
     bg = pygame.image.load('./images/bg.png')
     run = True
+    
     n = Network()
     p = n.getP()
     p.draw(screen)
     # other cars
-
+    c  = Client(username)
+    receive_thread = threading.Thread(target=c.run)
+    receive_thread.start()
+   
     car2 = pygame.image.load('./images/car2.png')
     car2X = random.randint(178, 490)
     car2Y = 100
