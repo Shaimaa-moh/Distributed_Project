@@ -1,10 +1,10 @@
-from pygame.locals import*  # import all modules from Pygame
+from pygame.locals import *  # import all modules from Pygame
 import time
 import math
 import random
 import pygame
 import sys
-import threading
+from _thread import*
 from Chat.clie import Client
 from player import Player
 
@@ -264,15 +264,14 @@ def gameloop():
     # setting background image
     bg = pygame.image.load('./images/bg.png')
     run = True
-    
+
     n = Network()
     p = n.getP()
     p.draw(screen)
     # other cars
-    c  = Client(username)
-    receive_thread = threading.Thread(target=c.run)
-    receive_thread.start()
-   
+    c = Client(username)
+    start_new_thread(c.run,())
+    p.draw(screen)
     car2 = pygame.image.load('./images/car2.png')
     car2X = random.randint(178, 490)
     car2Y = 100

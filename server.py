@@ -6,7 +6,7 @@ import pickle
 import random
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-server = "192.168.1.2"  # ip address of my device
+server = "192.168.1.15"  # ip address of my device
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -37,7 +37,7 @@ db = client['Distributed_Project2023']
 collections = db['Players']
 players = [Player(250, 479, "./images/car.png"), Player(400, 479,
                                                         "./images/divo.png")]  # store player object on the server
-s.listen(2)
+s.listen()
 game_end = False
 collide = [False, False]
 
@@ -61,7 +61,7 @@ def clientThread(conn, player):  # we want to have multiple connections done at 
         try:
             # longer the size of receiving msg , longer it can receive information4
             data = pickle.loads(conn.recv(4096))  # object from player
-            if data["Game"]=="start":
+            if data["Game"] == "start":
                 document = collections.find_one(
                     {'username': data["Username"]})  # see username in db or not
                 if document is None:
