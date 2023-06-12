@@ -11,6 +11,7 @@ class client:
         self.connection=connection
         
 class ClientList:
+    
     def __init__(self):
         self.head=None
 
@@ -46,7 +47,26 @@ class ClientList:
                  return client
                 client=client.next
             return None
+    def drop(self, client):
 
+        temp = self.head
+        if temp is None or client is None:
+            return
+        
+        if temp == client:
+            #Head of the list is the client
+            #set the head to the next thing skipping the client and it will be automatically deleted
+            self.head = temp.next
+            return
+        
+        while temp:
+
+            if temp.next == client:
+                #If next thing matched the client
+                temp.next = client.next
+                return
+            
+            temp = temp.next
 
 class Message:
 
@@ -56,6 +76,7 @@ class Message:
         self.next = None
 
 class MessageList:
+    #When one of the clients sends a message or a bunch of messages we want to save them then send them off to all of the clients
 
 
     def __init__(self):
@@ -75,6 +96,7 @@ class MessageList:
 
 #View
 #creating gui elements
+
 
 class label:
     def __init__(self, text, font):
@@ -169,7 +191,7 @@ class Server:
         # self.clientList.add('Mary')
         # self.clientList.add('bob')
         #ipconfig on commandline
-        self.host='192.168.145.27'
+        self.host='192.168.1.4'
         self.socket=socket.socket(socket.AF_INET,socket.SOCK_STREAM) #IP uses 4 bytes
     #It doesnt block other processes if it waits to accept a connection
         self.socket.setblocking(0)
@@ -205,6 +227,7 @@ class Server:
             
             readable, writeable,exceptional=select.select(inputs,outputs,inputs,0.1)
             #timeout = 0.1 which is the number of seconds the server waits
+            #Every time the server updates, set up a new sets of messages that will be rewritten everytime and flush them out to the clients
             messageBuffer = MessageList()
             for s in readable:
                 #select goes when a device is readable which is there is a connection ready
@@ -217,6 +240,7 @@ class Server:
                     self.clientList.add(f"Client {clientNumber}",connection)
                     clientNumber +=1
                 else:
+                    #client connection
                     message=s.recv(4096).decode()
                     if message:
                         #Check client name,either update or tell the client the name is taken
@@ -232,24 +256,46 @@ class Server:
                         elif message.split(":")[0] == "message":
                             splitMessage = message.split(":")
                             #message:bob:hello
+                            #Split up and store the info in a string and pass it to the message buffer to be stored
                             messageBuffer.add(f"message:{splitMessage[1]}:{splitMessage[2]}")
                             client = self.clientList.head
                             while client is not None:
+                                #When getting a single message, set up every single client in the list to write
+                                #*/The next time we got  a message if its witthin the same time cycle
+                                #the clients will be already in the queue, that messsage will be added to the queue and queued up clients will get that messages*/
                                 if client.connection not in writeable:
                                     writeable.append(client.connection)
                                 client = client.next
-
+                    else:
+                        
+                        exceptional.append(s)
             for s in writeable:
+                #Looking through the buffered messages and append them into a single string seperated with a new line
                 messageEntry = messageBuffer.head
                 message = ""
+                #On the client side get that string and split it into different messages based on the new line character
                 while messageEntry is not None:
                     message += f"{messageEntry.text}\n"
                     messageEntry = messageEntry.next
                 message = message.encode()
 
                 if s is not self.socket:
+                    #Send the chat messages to all of the clients
                     s.send(message)
+            for s in exceptional:
+                #TCP
 
+                client = self.clientList.getByConnection(s)
+                #When client connection is dropped
+                print(f"Lost connection with {client.name}")
+                #When dropped remove the client from the connection
+                if s in inputs:
+                    inputs.pop(inputs.index(s))
+                if s in outputs:
+                    outputs.pop(outputs.index(s))
+                s.close()
+
+                self.clientList.drop(client)
             self.viewcontroller.drawScreen(self.clientList)   
                 
     

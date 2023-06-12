@@ -9,7 +9,7 @@ import select
 
 # MVC
 # Model
-
+#Every client sends a message that then will ping back to all clients
 class Message:
 
 
@@ -118,7 +118,10 @@ class InputField:
             self.text.text = self.text.text[:-1]
         else:
  	 #hit anything else, will be shown 
-            self.text.text += pg.key.name(event.key).replace("[", "").replace("]", "")
+            #self.text.text += pg.key.name(event.key).replace("[", "").replace("]", "")
+            #Is it alphanumeric and just one character
+            if str(pg.key.name(event.key)).isalnum() and len(str(pg.key.name(event.key))) == 1:
+                self.text.text += pg.key.name(event.key)
 
     def draw(self, surface, panelColor, textColor):
 
@@ -182,7 +185,7 @@ class ServerSelect(ViewController):
         super().__init__()
 
         self.screen = pg.display.set_mode((400,200))
-        self.IPLabel = Label("IP: 192.168.1.7", self.font)
+        self.IPLabel = Label("IP: 192.168.1.4", self.font)
 
         portLabel = Label("Port: ", self.font)
         portPanel = Rectangle((100,100), (150,32))
@@ -218,7 +221,7 @@ class ServerSelect(ViewController):
         if self.ready:
 		 # portNumber=  int(''.join(filter(str.isdigit, self.portField.text.text)))
             portNumber = int(self.portField.text.text.split(": ")[1])
-            controller.socket.connect(("192.168.145.27", portNumber))
+            controller.socket.connect((" 192.168.1.4", portNumber))
             return True
         return False
     
@@ -277,22 +280,26 @@ class ClientLogin(ViewController):
         #encode the string in a byte format
         #the server will respond whether the name is available or taken
 
-        if self.ready:
+        if self.ready: #If we are ready
+            #Grab the name from the text field and send it off
             message = "name:" + self.nameField.text.text.split(": ")[1]
             controller.socket.send(message.encode())
 
             print(f"Sent message \"{message}\"\n")
             response = controller.socket.recv(4096).decode()
             print(f"Got response\"{response}\"\n")
+            #If we got back that we are available read the text and set it as a name
             if response == "available":
 		 #if name is available set this name to the client to know who we are
                 controller.name = self.nameField.text.text.split(": ")[1]
 			#True means move on
                 return True
             else:
+                #If not available, clear the state of everything and get ready for the next input
+                
                 self.ready = False
                 self.nameField.text.text = "Username: "
-        
+        #if name is taken
         return False
     
     def getNextViewController(self):
@@ -343,24 +350,31 @@ class ChatRoom(ViewController):
             self.messageField.handleKeyPress(event)
     
     def shouldAdvance(self, controller):
+        #Handle the receiving of messages
 
         if self.ready:
+            #If message is ready to go, just send them off
             message = "message:" + controller.name + ":" + self.messageField.text.text
             controller.socket.send(message.encode())
             self.messageField.text.text = ""
+        
             self.ready = False
         
         inputs = [controller.socket,]
         outputs = []
+        #Grab a message from server
+        #Pass list of things as readable
         readable, writable, exceptional = select.select(inputs, outputs, inputs, 0.1)
 
         for s in readable:
+            #If we got message from the server which is a single string with a bunch of different messages so split them off(with the new line character)
             if s is controller.socket:
                 #message from server
                 messages = s.recv(4096).decode()
                 if messages:
                     for message in messages.split("\n"):
                         splitMessage = message.split(":")
+                        #If message is valid then append it to the list of messages
                         if splitMessage[0] == "message":
                             controller.messageList.add(splitMessage[1], splitMessage[2])
         
@@ -371,6 +385,7 @@ class ChatRoom(ViewController):
         return None
     
     def drawScreen(self, controller):
+        #We have a list of messages and when a new message is added it will be added at the head of the list
 
         self.screen.fill(self.palette["teal"])
 
