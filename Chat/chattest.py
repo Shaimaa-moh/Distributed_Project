@@ -5,7 +5,7 @@ from tkinter import font
 from tkinter import ttk
 
 PORT = 3000
-SERVER = "192.168.255.222"
+SERVER = "13.51.167.69"
 ADDRESS = (SERVER, PORT)
 # Create a new client socket
 # and connect to the server
