@@ -194,7 +194,7 @@ class Server:
         # self.clientList.add('Mary')
         # self.clientList.add('bob')
         # ipconfig on commandline
-        self.host = '192.168.1.15'
+        self.host = '192.168.255.222'
         self.socket = socket.socket(
             socket.AF_INET, socket.SOCK_STREAM)  # IP uses 4 bytes
     # It doesnt block other processes if it waits to accept a connection
@@ -247,19 +247,20 @@ class Server:
                         # Check client name,either update or tell the client the name is taken
                         print(f"Got message \"{message}\"\n ")
                         if message.split(":")[0] == "name":
-                            if self.clientList.nameAvailable(message.split(":")[1]):
+                            if self.clientList.nameAvailable(message.split(":")[0]):
                                 client = self.clientList.getByConnection(s)
-                                client.name = message.split(":")[1]
+                                client.name = message.split(":")[0]
                                 response = "available".encode()
                             else:
                                 response = "taken".encode()
                             s.send(response)
-                        elif message.split(":")[0] == "message":
+                        # elif message.split(":")[0] == "message":
+                        else:
                             splitMessage = message.split(":")
                             # message:bob:hello
                             # Split up and store the info in a string and pass it to the message buffer to be stored
                             messageBuffer.add(
-                                f"message:{splitMessage[1]}:{splitMessage[2]}")
+                                f"{splitMessage[0]}:{splitMessage[1]}")
                             client = self.clientList.head
                             while client is not None:
                                 # When getting a single message, set up every single client in the list to write
