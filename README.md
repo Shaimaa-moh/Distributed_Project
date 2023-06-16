@@ -9,7 +9,7 @@ The game starts by car moving forward, and you must gain score by avoiding colli
 The game is designed to support real-time playing and viewing by multiple participants, adding chat feature to make all player communicate world widely.
 
 We made two servers, one for the racing game and the other for the chat, in this way we will maintain fault tolerance. So, if the server game fails the chat can stand alone and vice versa.Moreover we used mongo dB, a no sql database that will serve our demands in achieving replication consistency.
-![hello to our game.](https://drive.google.com/file/d/1nq9LzvXWXpnL8JdjhH9cw7wHTjrqubLN/view?usp=sharing)
+![hello to our game.](https://drive.google.com/file/d/1TWDSudZXq6VnW7k5M5lY_T863IuMEsdM/view)
 
 ## racing.py main functions
 You have to install pygame library :
