@@ -1,5 +1,5 @@
 
-# Distributed_Project
+# RacingGame_Project 🕹️
 
 A project of a mini racing car game supports the concepts of distributed systems and remote connections.
 Throughout this project, we are implementing a 2D racing car game with multiple features.
@@ -42,4 +42,12 @@ You have to install socketio library :
 The server is responsible for listening for client connections, bind the socket with our desired ip and port number. It receives and sends data between clients like data of player object and store their positions in list , and that helps performing multi playing concept , if player  0  is playing reply  by  its position to player 1  and vice versa .
 
 Then interacts with a Mongo DB database used for replication. Also we used pickle process which is a process whereby a python object hierarchy is converted into byte stream, and it facilitates sending object of the players.
+ 
+## Network.py
+- Creating network class which is responsible for connecting to our server using the socket module in Python.
+- Invoking the connect() method to establish a connection to our server, initializing the self.client attribute with a new socket object, and stores the return value in the self.p attribute.
+- The getP() method which is obtain the data received from the server after a successful connection. It returns self.p which was set by connect() method.
+- The connect() method which is responsible to connect to the server and receive data from the server. It connects to the server using the socket object's connect() method and passes the server’s IP address and the port number which are stored in self.addr
+- The send() method uses the pickle.dumps() function to serialise the data argument before sending the serialised data to the server using the socket object's send() method.
+  
 
