@@ -5,7 +5,7 @@ from tkinter import font
 from tkinter import ttk
 
 PORT = 3000
-SERVER = "16.170.162.38"
+SERVER = "44.212.43.71"
 ADDRESS = (SERVER, PORT)
 # Create a new client socket
 # and connect to the server
@@ -59,10 +59,10 @@ class Chat:
         self.win.deiconify()
         self.win.title("Chat")
         self.win.resizable(width=False, height=False)
-        self.win.configure(width=470, height=550, bg="#F0E68C")
+        self.win.configure(width=470, height=550, bg="#E2F2EF")
         self.labelHead = Label(
             self.win,
-            bg="#F0E68C",
+            bg="#E2F2EF",
             fg="#000000",
             text="Chat",
             font="Arial 14 bold",
@@ -73,15 +73,15 @@ class Chat:
             self.win,
             width=20,
             height=2,
-            bg="#008000",
-            fg="#EAECEE",
+            bg="#7FBBB2",
+            fg="#000000",
             font="Arial 15",
             padx=5,
             pady=5,
         )
         self.text_area.place(relheight=0.745, relwidth=1, rely=0.08)
         self.text_area.config(cursor="arrow")
-        self.labelBottom = Label(self.win, bg="#c0ff33", height=80)
+        self.labelBottom = Label(self.win, bg="#7FBBB2", height=80)
         self.labelBottom.place(relwidth=1, rely=0.775)
         self.entry_Msg = Entry(self.labelBottom, font="Arial 13")
         self.entry_Msg.place(relwidth=0.74, relheight=0.06, rely=0.008,
@@ -93,8 +93,8 @@ class Chat:
             text="Send",
             font="Arial 10 bold",
             width=10,
-            bg="#F0E68C",
-            fg="#FFFFFF",
+            bg="#E4DED0",
+            fg="#000000",
             command=lambda: self.write(self.entry_Msg.get()),
         )
         self.send_Button.place(relx=0.77, rely=0.035, relheight=0.02,
