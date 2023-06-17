@@ -54,7 +54,7 @@ We made two servers, one for the racing game and the other for the chat, in this
 
 
 
-## Game Implementation
+## A)Game Implementation
 ### racing.py main functions
 You have to install pygame library :
 > pip install pygame
@@ -98,7 +98,7 @@ Then interacts with a Mongo DB database used for replication. Also we used pickl
 
   ---
   ---
-  ## Chat Feature Implementation
+  ## B)Chat Feature Implementation
   ### Serv.py (The server side)
 First of all the socket connection is set to bind to an IP and port number, we set the port number to be static in both client and server to be= 3000.
 - The run method is the main loop of the server. It listens for incoming connections, reads messages from clients, handles client name updates, and sends messages to all connected clients.
