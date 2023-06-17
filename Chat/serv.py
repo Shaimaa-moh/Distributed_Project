@@ -194,14 +194,14 @@ class Server:
         # self.clientList.add('Mary')
         # self.clientList.add('bob')
         # ipconfig on commandline
-        self.host = '16.171.65.213'
+        self.host = '16.171.65.113'
         self.socket = socket.socket(
             socket.AF_INET, socket.SOCK_STREAM)  # IP uses 4 bytes
     # It doesnt block other processes if it waits to accept a connection
         self.socket.setblocking(0)
-        self.socket.bind((self.host, 3000))
+        self.socket.bind((self.host, 5555))
         # self.port=self.socket.getsockname()[1] #we get the port number
-        self.port = 3000
+        self.port = 5555
         # self.viewcontroller=ViewController(self.port)
         self.clientList = ClientList()
 
