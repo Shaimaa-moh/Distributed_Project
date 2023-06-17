@@ -11,8 +11,6 @@ class client:
         self.name = name
         self.next = None
         self.connection = connection
-
-
 class ClientList:
 
     def __init__(self):
@@ -75,14 +73,10 @@ class Message:
 
 class MessageList:
     # When one of the clients sends a message or a bunch of messages we want to save them then send them off to all of the clients
-
     def __init__(self):
         self.head = None
-
     def add(self, text):
-
         newMessage = Message(text)
-
         # do we have an empty list?
         if self.head is None:
             self.head = newMessage
@@ -194,7 +188,7 @@ class Server:
         # self.clientList.add('Mary')
         # self.clientList.add('bob')
         # ipconfig on commandline
-        self.host = '44.212.43.71'
+        self.host = '192.168.1.2'
         self.socket = socket.socket(
             socket.AF_INET, socket.SOCK_STREAM)  # IP uses 4 bytes
     # It doesnt block other processes if it waits to accept a connection
