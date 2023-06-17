@@ -22,7 +22,7 @@ We made two servers, one for the racing game and the other for the chat, in this
 ![image](https://github.com/Shaimaa-moh/Distributed_Project/assets/67200068/29c8e80f-d11a-4076-b884-ec9bc238ffbc)
 5) Run the Game server by **python server.py** in th terminal
 ![image](https://github.com/Shaimaa-moh/Distributed_Project/assets/67200068/ee4109f3-095d-4753-81ba-2fce5c8992a9)
-6) Run the Chate server by **python Chat/serv,py** in the terminal
+6) Run the Chat server by **python Chat/serv,py** in the terminal
 ![image](https://github.com/Shaimaa-moh/Distributed_Project/assets/67200068/6ab02c58-5714-4978-8e46-469b71515a82)
 7) Run the game by running **python racing.py** in the terminal and **enjoy our Game**
 ![image](https://github.com/Shaimaa-moh/Distributed_Project/assets/67200068/6775d6f1-0650-4e01-b9f1-66cfd699cf6b)
@@ -99,7 +99,7 @@ Then interacts with a Mongo DB database used for replication. Also we used pickl
   ---
   ---
   ## Chat Feature Implementation
-  ###Serv.py (The server side)
+  ### Serv.py (The server side)
 First of all the socket connection is set to bind to an IP and port number, we set the port number to be static in both client and server to be= 3000.
 - The run method is the main loop of the server. It listens for incoming connections, reads messages from clients, handles client name updates, and sends messages to all connected clients.
 - The method starts by creating a list of readable, writable, and exceptional connections using select.select().
@@ -110,7 +110,7 @@ First of all the socket connection is set to bind to an IP and port number, we s
 - In the writable connections loop, it retrieves the messages from the messageBuffer and sends them to all connected clients. It initializes an empty string called message to hold the concatenated messages. It starts iterating over the linked list of messages in the messageBuffer using the messageEntry variable, which is set to the head of the list. For each message entry, it appends the text of the message followed by a newline character ('\n') to the message string. This creates a single string where each message is separated by a newline character. After iterating through all the message entries, it encodes the message string into bytes using the encode() method. Encoding is necessary to convert the string into a format that can be sent over the network.
 - In the exceptional connections loop, it handles dropped connections, removes the disconnected client from the clientList, and closes the socket.
   ---
-  ###chattest.py (The Client Side)
+  ### chattest.py (The Client Side)
 - The __init__ method initializes a Chat object. It creates and configures a Tkinter window (self.win) for the chat interface, sets up the layout of the chat window, starts a separate thread for receiving messages, and starts the main event loop of the Tkinter window.
 - The layout method sets up the visual layout of the chat window using various Tkinter widgets such as labels, text areas, entry fields, and buttons.
 - The write method is called when the user clicks the send button. It retrieves the message entered by the user, clears the input field, and starts a separate thread for sending the message.
