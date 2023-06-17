@@ -4,8 +4,8 @@ from tkinter import *
 from tkinter import font
 from tkinter import ttk
 
-PORT = 3000
-SERVER = "16.171.65.213"
+PORT = 5555
+SERVER = "16.16.207.219"
 ADDRESS = (SERVER, PORT)
 # Create a new client socket
 # and connect to the server
@@ -157,4 +157,4 @@ class Chat:
             break
 
 
-# c = Chat('Aya')
+c = Chat('Aya')

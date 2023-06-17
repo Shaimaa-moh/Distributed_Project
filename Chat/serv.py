@@ -194,7 +194,7 @@ class Server:
         # self.clientList.add('Mary')
         # self.clientList.add('bob')
         # ipconfig on commandline
-        self.host = '0.0.0.0'
+        self.host = '16.16.207.219'
         self.socket = socket.socket(
             socket.AF_INET, socket.SOCK_STREAM)  # IP uses 4 bytes
     # It doesnt block other processes if it waits to accept a connection
