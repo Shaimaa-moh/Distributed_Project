@@ -11,6 +11,22 @@ The game is designed to support real-time playing and viewing by multiple partic
 We made two servers, one for the racing game and the other for the chat, in this way we will maintain fault tolerance. So, if the server game fails the chat can stand alone and vice versa.Moreover we used mongo dB, a no sql database that will serve our demands in achieving replication consistency.
 ![hello to our game.](https://drive.google.com/file/d/1TWDSudZXq6VnW7k5M5lY_T863IuMEsdM/view)
 
+## How to run the project
+1)Download the Project Directory in your Visual Studio
+![image](https://github.com/Shaimaa-moh/Distributed_Project/assets/67200068/d69f6b58-fbb2-4101-bcc0-bce96810bd3d)
+2)Adjust server.py to connect to your local network
+![image](https://github.com/Shaimaa-moh/Distributed_Project/assets/67200068/9e264752-e9c7-43b9-9091-64348be01272)
+3)Adjust network.py to connect to your local network
+![image](https://github.com/Shaimaa-moh/Distributed_Project/assets/67200068/b37d5afd-d158-40bc-8a35-820f308ef58e)
+4)Adjust the Chat Server (Chat/serv.py) to connect to your local newtork and chattest.py
+![image](https://github.com/Shaimaa-moh/Distributed_Project/assets/67200068/29c8e80f-d11a-4076-b884-ec9bc238ffbc)
+5)Run the Game server by **python server.py** in th terminal
+![image](https://github.com/Shaimaa-moh/Distributed_Project/assets/67200068/ee4109f3-095d-4753-81ba-2fce5c8992a9)
+6)Run the Chate server by **python Chat/serv,py** in the terminal
+![image](https://github.com/Shaimaa-moh/Distributed_Project/assets/67200068/6ab02c58-5714-4978-8e46-469b71515a82)
+
+
+
 ## racing.py main functions
 You have to install pygame library :
 > pip install pygame
