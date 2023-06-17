@@ -22,8 +22,33 @@ We made two servers, one for the racing game and the other for the chat, in this
 ![image](https://github.com/Shaimaa-moh/Distributed_Project/assets/67200068/29c8e80f-d11a-4076-b884-ec9bc238ffbc)
 5) Run the Game server by **python server.py** in th terminal
 ![image](https://github.com/Shaimaa-moh/Distributed_Project/assets/67200068/ee4109f3-095d-4753-81ba-2fce5c8992a9)
-6) Run the Chate server by **python Chat/serv,py** in the terminal
+6) Run the Chate server by **python Chat/serv,py** in the terminal and **enjoy our Game**
 ![image](https://github.com/Shaimaa-moh/Distributed_Project/assets/67200068/6ab02c58-5714-4978-8e46-469b71515a82)
+
+---
+---
+
+
+
+## Game ScreenShots
+### The Home Screen
+![image](https://github.com/Shaimaa-moh/Distributed_Project/assets/67200068/83374a2c-0462-4b11-8c5c-fd4d4a882a8a)
+---
+---
+### The Waiting Screen
+![image](https://github.com/Shaimaa-moh/Distributed_Project/assets/67200068/9f69902b-397e-47d6-a400-8c600e22f489)
+---
+---
+### The Game Run
+![image](https://github.com/Shaimaa-moh/Distributed_Project/assets/67200068/161d37f2-24a9-4cef-ba1c-b682e46069fc)
+---
+---
+### Player Chat
+![image](https://github.com/Shaimaa-moh/Distributed_Project/assets/67200068/228fb288-5676-4b09-9e36-dc9d39b34fa8)
+---
+---
+
+
 
 
 
