@@ -4,7 +4,7 @@ import math
 import random
 import pygame
 import sys
-from _thread import*
+from _thread import *
 from Chat.chattest import Chat
 from player import Player
 
@@ -234,8 +234,9 @@ def gameloop():
                     if event.key == pygame.K_ESCAPE:
                         pygame.quit()
                         sys.exit()
+
     def Create_Chat(username):
-        c=Chat(username)
+        c = Chat(username)
 
     ###### creating our game over function #######
 
@@ -271,8 +272,7 @@ def gameloop():
     p = n.getP()
     p.draw(screen)
 
- 
-    start_new_thread(Create_Chat,(username,))
+    start_new_thread(Create_Chat, (username,))
     p.draw(screen)
     car2 = pygame.image.load('./images/car2.png')
     car2X = random.randint(178, 490)
