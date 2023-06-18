@@ -157,4 +157,4 @@ class Chat:
             break
 
 
-c = Chat('Aya')
+# c = Chat('Aya')
