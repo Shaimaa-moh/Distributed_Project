@@ -270,7 +270,7 @@ def gameloop():
 
     n = Network()
     p = n.getP()
-    p.draw(screen)
+    # p.draw(screen)
 
     start_new_thread(Create_Chat, (username,))
     p.draw(screen)
