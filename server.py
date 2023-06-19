@@ -6,7 +6,7 @@ import pickle
 import random
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-server = "13.51.167.69"  # ip address of my device
+server = "13.51.170.207"  # ip address of my device
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
