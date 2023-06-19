@@ -6,8 +6,8 @@ import pickle
 import random
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-server = "13.51.170.207"  # ip address of my device
-port = 5555
+server = "172.31.20.83"  # ip address of my device
+port = 3000
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -37,7 +37,7 @@ db = client['Distributed_Project2023']
 collections = db['Players']
 players = [Player(250, 479, "./images/car.png"), Player(400, 479,
                                                         "./images/divo.png")]  # store player object on the server
-s.listen()
+s.listen(2)
 game_end = False
 collide = [False, False]
 
@@ -112,7 +112,7 @@ def clientThread(conn, player):  # we want to have multiple connections done at 
                     }
 
                 print("received: ", data)
-                #print("Sending :", reply)
+                # print("Sending :", reply)
 
             conn.sendall(pickle.dumps(reply))
             if collide[0] == True and collide[1] == True:
